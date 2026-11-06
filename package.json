@@ -1,0 +1,8 @@
+{
+  "name": "pub-compass",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "node --test"
+  }
+}
