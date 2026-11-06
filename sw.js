@@ -1,6 +1,6 @@
 // Minimal service worker: makes the app installable and lets the shell load offline.
 // Network-first for our own files; Overpass (cross-origin) is never touched or cached here.
-const CACHE = "pub-compass-v2";
+const CACHE = "pub-compass-v3";
 const SHELL = [
   "./",
   "index.html",
@@ -16,7 +16,7 @@ const SHELL = [
 ];
 
 self.addEventListener("install", (e) => {
-  e.waitUntil(caches.open(CACHE).then((c) => c.addAll(SHELL)).then(() => self.skipWaiting()));
+  e.waitUntil(caches.open(CACHE).then((c) => c.addAll(SHELL.map((u) => new Request(u, { cache: "reload" })))).then(() => self.skipWaiting()));
 });
 
 self.addEventListener("activate", (e) => {
@@ -32,7 +32,9 @@ self.addEventListener("fetch", (e) => {
   const url = new URL(e.request.url);
   if (e.request.method !== "GET" || url.origin !== self.location.origin) return;
   e.respondWith(
-    fetch(e.request)
+    // no-cache: always revalidate with the server (cheap via ETag) so deploys show up immediately,
+    // instead of the browser's HTTP cache serving old files for GitHub Pages' 10-minute max-age.
+    fetch(e.request.url, { cache: "no-cache" }) // by URL: navigate-mode Requests can't take an init
       .then((res) => {
         const copy = res.clone();
         caches.open(CACHE).then((c) => c.put(e.request, copy));
