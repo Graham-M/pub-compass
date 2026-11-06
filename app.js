@@ -41,6 +41,7 @@ const state = {
   heading: null, // degrees, null = unknown
   hasCompass: false,
   fetching: false,
+  fetchNote: null, // progress text while fetching
   error: null,
 };
 
@@ -131,7 +132,10 @@ async function refresh(startRadius = RADII[0]) {
   render();
   try {
     for (const radius of RADII.filter((r) => r >= startRadius)) {
-      const pubs = await fetchPubs(state.pos.lat, state.pos.lon, radius);
+      const pubs = await fetchPubs(state.pos.lat, state.pos.lon, radius, (note) => {
+        state.fetchNote = note;
+        render();
+      });
       state.radius = radius;
       state.pubs = sortByDistance(pubs, state.pos.lat, state.pos.lon);
       if (currentTarget()) break;
@@ -139,9 +143,10 @@ async function refresh(startRadius = RADII[0]) {
   } catch (e) {
     console.warn(e);
     state.error =
-      "The pub oracle isn't answering (map servers are busy). Give it a minute and retry.";
+      "The pub map servers are all swamped right now. Give it a minute and hit Retry.";
   } finally {
     state.fetching = false;
+    state.fetchNote = null;
     render();
   }
 }
@@ -190,7 +195,7 @@ function render() {
   } else if (!state.pos) {
     status = "Finding you…";
   } else if (state.fetching && !target) {
-    status = "Sniffing out pubs…";
+    status = state.fetchNote || "Sniffing out pubs…";
   } else if (!state.hasCompass && target) {
     status = "No compass on this device — the needle points relative to north (top of screen = north).";
   }
