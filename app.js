@@ -9,7 +9,7 @@ import {
   sortByDistance,
   unskipLast,
 } from "./lib.js";
-import { fetchPubs } from "./overpass.js";
+import { fetchPubs } from "./pubs.js";
 
 const RADII = [2000, 5000];
 const REFETCH_AFTER_M = 100;

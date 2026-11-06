@@ -2,9 +2,10 @@ Build "Pub Compass": a mobile web app (iPhone + Android) where a compass needle 
 
 Stack:
 - Static PWA (vanilla JS/HTML/CSS, no framework) hosted on GitHub Pages using "Deploy from a branch" (main, root). No build step, no GitHub Actions.
-- No backend: query the OpenStreetMap Overpass API directly from the browser (it supports CORS, no API keys)
+- No backend. Pub data for Great Britain is pre-built into static tiles (data/tiles/<latIdx>_<lonIdx>.json, 0.1° cells, rows of [id, name, lat, lon]) by tools/build-pubs.sh (Geofabrik extract -> osmium tags-filter nwr/amenity=pub -> tools/build-tiles.js) and served by GitHub Pages. data/meta.json lists the tiles and 0.5° coverage cells. Pub IDs use Overpass-style "node/123" so skips work across both sources.
+- Outside the static coverage, query the OpenStreetMap Overpass API directly from the browser (it supports CORS, no API keys).
 
-Overpass:
+Overpass (fallback outside static coverage):
 - Query nwr["amenity"="pub"] within 2km (widen to 5km if none) using `out center`. Keep the full result list sorted by distance client-side.
 - Cache results in localStorage keyed on coords rounded to ~500m tiles, 1h TTL.
 - On 429 or timeout, back off and retry against overpass.kumi.systems as a fallback. Show a friendly error if both fail.

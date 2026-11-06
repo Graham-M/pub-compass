@@ -3,7 +3,8 @@
 A mobile web app whose compass needle points at the nearest pub. Don't fancy it? Tap **Nah, next one**.
 
 - Static PWA: vanilla HTML/CSS/JS, no build step, no backend
-- Pub data from OpenStreetMap via the [Overpass API](https://overpass-api.de/) (with `overpass.kumi.systems` as a fallback), cached in `localStorage` per ~500 m tile for 1 hour
+- Pub data for Great Britain is pre-built from OpenStreetMap into small static tiles in `data/`, served by GitHub Pages itself. No live API, no rate limits.
+- Outside Great Britain it falls back to the live [Overpass API](https://overpass-api.de/), with backup servers and a 1-hour `localStorage` cache.
 - Works on iPhone (Safari) and Android (Chrome); installable to the home screen
 
 ## Files
@@ -13,7 +14,10 @@ index.html            UI
 style.css             dark, thumb-friendly styles
 app.js                compass, geolocation, skip buttons, rendering
 lib.js                pure helpers: bearing, distance, sorting, skip/next selection
-overpass.js           Overpass fetch with cache, timeout and fallback
+pubs.js               picks the data source: static tiles, or Overpass outside coverage
+overpass.js           live Overpass fetch with cache, timeouts and backup servers
+data/                 generated pub tiles (0.1° cells) + meta.json. Don't edit by hand
+tools/build-pubs.sh   rebuilds data/ from a fresh OpenStreetMap extract
 sw.js                 minimal service worker (app shell only; never caches Overpass)
 manifest.webmanifest  PWA manifest
 icons/                app icons (PNG regenerated with `node tools/make-icons.js`)
@@ -29,6 +33,18 @@ node --test                   # unit tests (Node 18+)
 
 Phones only allow geolocation and compass access over HTTPS, so test on a device through GitHub Pages (or a tunnel).
 
+## Refreshing the pub data
+
+The data is a snapshot, so re-run this every month or so (or when a new local opens):
+
+```sh
+sudo port install osmium-tool    # or: brew install osmium-tool (one-off)
+tools/build-pubs.sh              # downloads ~2.2 GB into .osm/ (git-ignored), rebuilds data/
+git add data && git commit -m "Refresh pub data" && git push
+```
+
+To cover more of the map, add Geofabrik region names to `REGIONS` in `tools/build-pubs.sh`.
+
 ## Deploy to GitHub Pages
 
 1. Push this repo to GitHub (e.g. `pub-compass`).
@@ -43,4 +59,5 @@ All paths are relative, so it works from the `/pub-compass/` subpath. After you 
 
 - iOS needs a tap before it will ask for compass permission, which is why there's a **Find a pub** button.
 - If your device has no compass, the needle points relative to north, with the top of the screen as north.
+- Pub data © OpenStreetMap contributors, available under the ODbL.
 - Your skipped pubs are kept for the browser session and survive moving around and refetching. **Back** un-skips the last one and **Reset** clears them all.

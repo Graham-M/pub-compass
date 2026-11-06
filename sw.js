@@ -1,6 +1,6 @@
 // Minimal service worker: makes the app installable and lets the shell load offline.
-// Network-first for our own files; Overpass (cross-origin) is never touched or cached here.
-const CACHE = "pub-compass-v3";
+// Network-first for our own files (including pub tiles, so visited areas work offline); Overpass (cross-origin) is never touched or cached here.
+const CACHE = "pub-compass-v4";
 const SHELL = [
   "./",
   "index.html",
@@ -8,6 +8,8 @@ const SHELL = [
   "app.js",
   "lib.js",
   "overpass.js",
+  "pubs.js",
+  "data/meta.json",
   "manifest.webmanifest",
   "icons/icon.svg",
   "icons/icon-180.png",

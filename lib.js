@@ -100,3 +100,38 @@ export function tileFor(lat, lon, radius) {
   const lonIdx = Math.round(lon / lonStep);
   return { key: `pubs:${radius}:${latIdx}:${lonIdx}`, lat: cLat, lon: lonIdx * lonStep };
 }
+
+// ---------- static tiles (data/tiles/<latIdx>_<lonIdx>.json, 0.1° cells) ----------
+export const TILE_DEG = 0.1;
+export const COVERAGE_DEG = 0.5;
+
+const cellKey = (lat, lon, deg) => `${Math.floor(lat / deg + 1e-9)}_${Math.floor(lon / deg + 1e-9)}`;
+
+/** Key of the 0.1° static tile containing a point. */
+export function staticTileKey(lat, lon) {
+  return cellKey(lat, lon, TILE_DEG);
+}
+
+/** Key of the coarse 0.5° cell used to decide whether static data covers a point. */
+export function coverageKey(lat, lon) {
+  return cellKey(lat, lon, COVERAGE_DEG);
+}
+
+/** Keys of every static tile that a circle of `radius` metres around the point touches. */
+export function tilesForRadius(lat, lon, radius) {
+  const dLat = radius / 111320;
+  const dLon = radius / (111320 * Math.max(0.01, Math.cos(toRad(lat))));
+  const keys = [];
+  const idx = (v) => Math.floor(v / TILE_DEG + 1e-9); // same rounding as staticTileKey
+  for (let y = idx(lat - dLat); y <= idx(lat + dLat); y++) {
+    for (let x = idx(lon - dLon); x <= idx(lon + dLon); x++) {
+      keys.push(`${y}_${x}`);
+    }
+  }
+  return keys;
+}
+
+/** Tile rows are compact [id, name, lat, lon] arrays. */
+export function parseTile(rows) {
+  return rows.map(([id, name, lat, lon]) => ({ id, name: name || "Unnamed pub", lat, lon }));
+}
