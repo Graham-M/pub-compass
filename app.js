@@ -18,7 +18,7 @@ import { wikiSummary } from "./wiki.js";
 const RADII = [2000, 5000];
 const REFETCH_AFTER_M = 100;
 const ARRIVED_M = 25;
-const SKIP_KEY = "pubCompass.skipped";
+const SKIP_KEY = "pubwhichway.skipped";
 
 const $ = (id) => document.getElementById(id);
 const el = {

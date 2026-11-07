@@ -1,4 +1,4 @@
-# 🍺 Pub Compass
+# 🍺 pubwhichway
 
 A mobile web app whose compass needle points at the nearest pub. Don't fancy it? Tap **Nah, next one**.
 
@@ -52,14 +52,14 @@ To cover more of the map, add Geofabrik region names to `REGIONS` in `tools/buil
 
 ## Deploy to GitHub Pages
 
-1. Push this repo to GitHub (e.g. `pub-compass`).
+1. Push this repo to GitHub (e.g. `pubwhichway`).
 2. Go to **Settings → Pages**.
 3. Under **Build and deployment**, set **Source** to **Deploy from a branch**, then select the **main** branch and the **/ (root)** folder, and click **Save**.
-4. After a minute the app is live at `https://<user>.github.io/pub-compass/`.
+4. After a minute the app is live at `https://<user>.github.io/pubwhichway/`.
 5. On your phone, open it, tap **Find a pub**, and allow location (and motion & orientation on iOS). To install it, use **Share → Add to Home Screen** on iOS or **Install app** on Android.
 
 The live site is https://pubwhichway.co.uk/ (custom domain set in Settings → Pages; the `CNAME` file is managed by GitHub).
-All paths are relative, so it also works from a `/pub-compass/` subpath. The one exception is the Open Graph tags in `index.html`, which must be absolute URLs for link previews. After you deploy changes, bump `CACHE` in `sw.js` so installed copies drop the old app-shell cache sooner. It's network-first anyway, so online users get updates straight away.
+All paths are relative, so it also works from a `/pubwhichway/` subpath. The one exception is the Open Graph tags in `index.html`, which must be absolute URLs for link previews. After you deploy changes, bump `CACHE` in `sw.js` so installed copies drop the old app-shell cache sooner. It's network-first anyway, so online users get updates straight away.
 
 ## Notes
 

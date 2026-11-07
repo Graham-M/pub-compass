@@ -1,4 +1,4 @@
-Build "Pub Compass": a mobile web app (iPhone + Android) where a compass needle points to the nearest pub.
+Build "pubwhichway" (live at https://pubwhichway.co.uk): a mobile web app (iPhone + Android) where a compass needle points to the nearest pub.
 
 Stack:
 - Static PWA (vanilla JS/HTML/CSS, no framework) hosted on GitHub Pages using "Deploy from a branch" (main, root). No build step, no GitHub Actions.

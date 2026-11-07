@@ -1,6 +1,6 @@
 {
-  "name": "Pub Compass",
-  "short_name": "Pub Compass",
+  "name": "pubwhichway",
+  "short_name": "pubwhichway",
   "description": "A compass that points to the nearest pub.",
   "start_url": "./",
   "scope": "./",

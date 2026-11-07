@@ -1,6 +1,6 @@
 // Minimal service worker: makes the app installable and lets the shell load offline.
 // Network-first for our own files (including pub tiles, so visited areas work offline); Overpass (cross-origin) is never touched or cached here.
-const CACHE = "pub-compass-v6";
+const CACHE = "pubwhichway-v7";
 const SHELL = [
   "./",
   "index.html",
