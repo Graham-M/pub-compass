@@ -23,7 +23,8 @@ data/                 generated pub tiles (0.1° cells) + meta.json. Don't edit 
 tools/build-pubs.sh   rebuilds data/ from a fresh OpenStreetMap extract
 sw.js                 minimal service worker (app shell only; never caches Overpass)
 manifest.webmanifest  PWA manifest
-icons/                app icons (PNG regenerated with `node tools/make-icons.js`)
+icons/                app icons (PNG regenerated with `node tools/make-icons.js`) and og.jpg,
+                      the link-preview image (regenerated from tools/og.html with tools/make-og.sh)
 tests/                `node --test` unit tests
 ```
 
@@ -57,7 +58,8 @@ To cover more of the map, add Geofabrik region names to `REGIONS` in `tools/buil
 4. After a minute the app is live at `https://<user>.github.io/pub-compass/`.
 5. On your phone, open it, tap **Find a pub**, and allow location (and motion & orientation on iOS). To install it, use **Share → Add to Home Screen** on iOS or **Install app** on Android.
 
-All paths are relative, so it works from the `/pub-compass/` subpath. After you deploy changes, bump `CACHE` in `sw.js` so installed copies drop the old app-shell cache sooner. It's network-first anyway, so online users get updates straight away.
+The live site is https://pubwhichway.co.uk/ (custom domain set in Settings → Pages; the `CNAME` file is managed by GitHub).
+All paths are relative, so it also works from a `/pub-compass/` subpath. The one exception is the Open Graph tags in `index.html`, which must be absolute URLs for link previews. After you deploy changes, bump `CACHE` in `sw.js` so installed copies drop the old app-shell cache sooner. It's network-first anyway, so online users get updates straight away.
 
 ## Notes
 
