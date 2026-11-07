@@ -1,1 +1,1 @@
-[["node/367693259","Besom Inn",55.652096,-2.250808],["way/205988214","Collingwood Arms",55.646948,-2.227469],["way/706578487","Castle Hotel",55.650265,-2.255564],["way/706889582","Newcastle Arms",55.651005,-2.252947]]
+[["node/367693259","Besom Inn",55.652096,-2.250808,{"real_fire":"yes","dog":"yes"}],["way/205988214","Collingwood Arms",55.646948,-2.227469,{"wikidata":"Q26652167","website":"https://collingwoodarms.com/"}],["way/706578487","Castle Hotel",55.650265,-2.255564],["way/706889582","Newcastle Arms",55.651005,-2.252947,{"wikidata":"Q56628703","heritage":"yes"}]]

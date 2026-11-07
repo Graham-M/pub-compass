@@ -1,4 +1,5 @@
 import {
+  compassPoint,
   distance,
   formatDistance,
   normalize,
@@ -8,11 +9,15 @@ import {
   skipPub,
   sortByDistance,
   unskipLast,
+  walkMinutes,
 } from "./lib.js";
 import { fetchPubs } from "./pubs.js";
+import { chips, headline } from "./facts.js";
+import { wikiSummary } from "./wiki.js";
 
 const RADII = [2000, 5000];
 const REFETCH_AFTER_M = 100;
+const ARRIVED_M = 25;
 const SKIP_KEY = "pubCompass.skipped";
 
 const $ = (id) => document.getElementById(id);
@@ -25,6 +30,12 @@ const el = {
   name: $("name"),
   meta: $("meta"),
   maps: $("maps"),
+  compass: $("compass"),
+  fact: $("fact"),
+  factText: $("fact-text"),
+  factSource: $("fact-source"),
+  chips: $("chips"),
+  site: $("site"),
   status: $("status"),
   retry: $("retry"),
   next: $("next"),
@@ -180,6 +191,34 @@ function mapsUrl(pub) {
   return `https://www.openstreetmap.org/?mlat=${pub.lat}&mlon=${pub.lon}#map=18/${pub.lat}/${pub.lon}`;
 }
 
+// Fact card: only rebuilt when the target pub changes; Wikipedia fills in later if it has anything.
+let factFor = null;
+function renderFact(pub) {
+  if (!pub) {
+    factFor = null;
+    el.fact.hidden = true;
+    return;
+  }
+  if (factFor === pub.id) return;
+  factFor = pub.id;
+  el.fact.hidden = false;
+  el.factText.textContent = headline(pub);
+  el.factSource.hidden = true;
+  el.chips.replaceChildren(
+    ...chips(pub.tags).map((c) => Object.assign(document.createElement("span"), { className: "chip", textContent: c })),
+  );
+  const site = /^https?:\/\//i.test(pub.tags?.website || "") ? pub.tags.website : null;
+  el.site.hidden = !site;
+  if (site) el.site.href = site;
+
+  wikiSummary(pub).then((w) => {
+    if (!w || factFor !== pub.id) return;
+    el.factText.textContent = w.text;
+    el.factSource.href = w.url;
+    el.factSource.hidden = false;
+  });
+}
+
 function render() {
   const target = currentTarget();
   const skippedHere = state.pubs.filter((p) => state.skipped.includes(p.id)).length;
@@ -196,6 +235,8 @@ function render() {
     status = "Finding you…";
   } else if (state.fetching && !target) {
     status = state.fetchNote || "Sniffing out pubs…";
+  } else if (target && target.pub.dist < ARRIVED_M) {
+    status = "🍻 You've arrived. Get them in.";
   } else if (!state.hasCompass && target) {
     status = "No compass on this device — the needle points relative to north (top of screen = north).";
   }
@@ -203,7 +244,12 @@ function render() {
   if (target) {
     const { pub, rank } = target;
     el.name.textContent = pub.name;
-    el.meta.textContent = `${formatDistance(pub.dist)} · ${rank === 1 ? "nearest" : `${ordinal(rank)} nearest`}`;
+    el.meta.textContent = [
+      formatDistance(pub.dist),
+      `~${walkMinutes(pub.dist)} min walk`,
+      compassPoint(pub.bearing),
+      rank === 1 ? "nearest" : `${ordinal(rank)} nearest`,
+    ].join(" · ");
     el.maps.href = mapsUrl(pub);
     el.maps.hidden = false;
   } else {
@@ -222,6 +268,8 @@ function render() {
     }
   }
 
+  renderFact(target?.pub);
+  el.compass.classList.toggle("arrived", !!target && target.pub.dist < ARRIVED_M);
   el.status.textContent = status;
   el.retry.hidden = !(state.error && state.pos);
 }
@@ -237,6 +285,11 @@ el.findBtn.addEventListener("click", async () => {
   if (!("geolocation" in navigator)) {
     state.error = "This browser can't share your location, so no pub for you.";
     return render();
+  }
+  const at = new URLSearchParams(location.search).get("at")?.split(",").map(Number);
+  if (at?.length === 2 && at.every(Number.isFinite)) {
+    onPosition({ coords: { latitude: at[0], longitude: at[1] } }); // ?at=lat,lon for testing
+    return requestAnimationFrame(animate);
   }
   navigator.geolocation.watchPosition(onPosition, onPositionError, {
     enableHighAccuracy: true,
@@ -268,6 +321,26 @@ el.reset.addEventListener("click", () => {
 });
 
 el.retry.addEventListener("click", () => refresh(state.radius));
+
+// Dial ticks: long every 30°, short every 10°.
+(function drawTicks() {
+  const g = document.getElementById("ticks");
+  for (let a = 0; a < 360; a += 10) {
+    if (a % 90 === 0) continue; // letters go there
+    const long = a % 30 === 0;
+    const t = document.createElementNS("http://www.w3.org/2000/svg", "line");
+    t.setAttribute("x1", 100);
+    t.setAttribute("x2", 100);
+    t.setAttribute("y1", 8);
+    t.setAttribute("y2", long ? 20 : 14);
+    t.setAttribute("transform", `rotate(${a} 100 100)`);
+    t.setAttribute("class", long ? "tick long" : "tick");
+    g.append(t);
+  }
+})();
+
+// ?at=lat,lon skips the button (no compass permission needed) for desktop testing.
+if (/[?&]at=/.test(location.search)) el.findBtn.click();
 
 if ("serviceWorker" in navigator) {
   navigator.serviceWorker.register("./sw.js").catch(() => {});

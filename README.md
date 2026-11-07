@@ -5,6 +5,7 @@ A mobile web app whose compass needle points at the nearest pub. Don't fancy it?
 - Static PWA: vanilla HTML/CSS/JS, no build step, no backend
 - Pub data for Great Britain is pre-built from OpenStreetMap into small static tiles in `data/`, served by GitHub Pages itself. No live API, no rate limits.
 - Outside Great Britain it falls back to the live [Overpass API](https://overpass-api.de/), with backup servers and a 1-hour `localStorage` cache.
+- A "Did you know?" fact for every pub: the opening of its Wikipedia article if it has one, otherwise history from its OpenStreetMap tags or the story behind its name (Royal Oak, White Hart, Chequers…), plus badges like 🛢️ Real ale and 🔥 Real fire
 - Works on iPhone (Safari) and Android (Chrome); installable to the home screen
 
 ## Files
@@ -14,6 +15,8 @@ index.html            UI
 style.css             dark, thumb-friendly styles
 app.js                compass, geolocation, skip buttons, rendering
 lib.js                pure helpers: bearing, distance, sorting, skip/next selection
+facts.js              pub-name trivia, tag badges, headline fact picker
+wiki.js               Wikipedia summary lookup (via wikipedia/wikidata tags), cached
 pubs.js               picks the data source: static tiles, or Overpass outside coverage
 overpass.js           live Overpass fetch with cache, timeouts and backup servers
 data/                 generated pub tiles (0.1° cells) + meta.json. Don't edit by hand
@@ -32,6 +35,7 @@ node --test                   # unit tests (Node 18+)
 ```
 
 Phones only allow geolocation and compass access over HTTPS, so test on a device through GitHub Pages (or a tunnel).
+On a desktop, add `?at=lat,lon` to fake your position and skip the button, e.g. `http://localhost:8000/?at=52.9497,-1.1544`.
 
 ## Refreshing the pub data
 
@@ -59,5 +63,6 @@ All paths are relative, so it works from the `/pub-compass/` subpath. After you 
 
 - iOS needs a tap before it will ask for compass permission, which is why there's a **Find a pub** button.
 - If your device has no compass, the needle points relative to north, with the top of the screen as north.
-- Pub data © OpenStreetMap contributors, available under the ODbL.
+- Pub data © OpenStreetMap contributors, available under the ODbL. Wikipedia extracts are CC BY-SA and link back to the article.
+- Name trivia is about the name, never invented facts about a particular pub. Add more in `NAME_TRIVIA` in `facts.js`.
 - Your skipped pubs are kept for the browser session and survive moving around and refetching. **Back** un-skips the last one and **Reset** clears them all.

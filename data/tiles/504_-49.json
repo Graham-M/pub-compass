@@ -1,1 +1,1 @@
-[["node/352648308","Halfway House",50.489771,-4.899468],["node/3977832217","The Victoria",50.420739,-4.832342],["way/1103189058","The Rock Inn",50.404224,-4.832573]]
+[["node/352648308","Halfway House",50.489771,-4.899468],["node/3977832217","The Victoria",50.420739,-4.832342,{"outdoor_seating":"yes"}],["way/1103189058","The Rock Inn",50.404224,-4.832573,{"outdoor_seating":"yes","food":"yes"}]]

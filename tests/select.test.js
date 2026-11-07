@@ -75,14 +75,14 @@ test("ordinal", () => {
 test("parsePubs handles nodes, ways (center) and missing names", () => {
   const out = parsePubs({
     elements: [
-      { type: "node", id: 1, lat: 1, lon: 2, tags: { name: "The Crown" } },
+      { type: "node", id: 1, lat: 1, lon: 2, tags: { name: "The Crown", real_ale: "yes", amenity: "pub", phone: "0" } },
       { type: "way", id: 2, center: { lat: 3, lon: 4 }, tags: {} },
       { type: "relation", id: 3, tags: { name: "No coords" } },
     ],
   });
   assert.deepEqual(out, [
-    { id: "node/1", name: "The Crown", lat: 1, lon: 2 },
-    { id: "way/2", name: "Unnamed pub", lat: 3, lon: 4 },
+    { id: "node/1", name: "The Crown", lat: 1, lon: 2, tags: { real_ale: "yes" } },
+    { id: "way/2", name: "Unnamed pub", lat: 3, lon: 4, tags: {} },
   ]);
 });
 

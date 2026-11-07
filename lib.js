@@ -41,7 +41,7 @@ export function parsePubs(json) {
       const lat = el.lat ?? el.center?.lat;
       const lon = el.lon ?? el.center?.lon;
       if (lat == null || lon == null) return null;
-      return { id: `${el.type}/${el.id}`, name: el.tags?.name || "Unnamed pub", lat, lon };
+      return { id: `${el.type}/${el.id}`, name: el.tags?.name || "Unnamed pub", lat, lon, tags: pickTags(el.tags) };
     })
     .filter(Boolean);
 }
@@ -131,7 +131,31 @@ export function tilesForRadius(lat, lon, radius) {
   return keys;
 }
 
-/** Tile rows are compact [id, name, lat, lon] arrays. */
+/** Tile rows are compact [id, name, lat, lon, tags?] arrays. */
 export function parseTile(rows) {
-  return rows.map(([id, name, lat, lon]) => ({ id, name: name || "Unnamed pub", lat, lon }));
+  return rows.map(([id, name, lat, lon, tags]) => ({ id, name: name || "Unnamed pub", lat, lon, tags: tags || {} }));
+}
+
+// ---------- pub details ----------
+/** OSM tags worth keeping for factoids and links (everything else is dropped to keep tiles small). */
+export const KEEP_TAGS = [
+  "wikipedia", "wikidata", "website", "brewery", "microbrewery", "real_ale", "real_cider", "real_fire",
+  "start_date", "old_name", "outdoor_seating", "beer_garden", "food", "dog", "live_music",
+  "listed_status", "heritage", "brand",
+];
+
+export function pickTags(tags = {}) {
+  const out = {};
+  for (const k of KEEP_TAGS) if (tags[k]) out[k] = String(tags[k]);
+  return out;
+}
+
+/** Walking time at ~80 m/min, at least 1 minute. */
+export function walkMinutes(m) {
+  return Math.max(1, Math.round(m / 80));
+}
+
+/** 8-point compass name for a bearing. */
+export function compassPoint(deg) {
+  return ["N", "NE", "E", "SE", "S", "SW", "W", "NW"][Math.round(normalize(deg) / 45) % 8];
 }

@@ -1,1 +1,1 @@
-[["node/1432146351","Ship Inn",56.18833,-2.816084],["node/6918524374","Station Buffet Bar",56.190715,-2.818073],["way/652927529","The 19th Hole",56.189854,-2.834509]]
+[["node/1432146351","Ship Inn",56.18833,-2.816084,{"website":"http://www.ship-elie.com"}],["node/6918524374","Station Buffet Bar",56.190715,-2.818073],["way/652927529","The 19th Hole",56.189854,-2.834509,{"food":"yes","dog":"yes"}]]

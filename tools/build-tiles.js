@@ -2,7 +2,7 @@
 // Usage: node tools/build-tiles.js a-pubs.geojsonseq [b-pubs.geojsonseq ...]
 // Writes data/tiles/<latIdx>_<lonIdx>.json and data/meta.json (replacing any previous tiles).
 import { mkdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
-import { coverageKey, staticTileKey } from "../lib.js";
+import { coverageKey, pickTags, staticTileKey } from "../lib.js";
 
 const files = process.argv.slice(2);
 if (!files.length) {
@@ -43,7 +43,10 @@ for (const file of files) {
     }
     if (pubs.has(id)) continue;
     const [lat, lon] = centre(f.geometry);
-    pubs.set(id, [id, f.properties?.name ?? "", round(lat), round(lon)]);
+    const tags = pickTags(f.properties);
+    const row = [id, f.properties?.name ?? "", round(lat), round(lon)];
+    if (Object.keys(tags).length) row.push(tags);
+    pubs.set(id, row);
   }
 }
 

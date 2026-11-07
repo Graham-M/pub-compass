@@ -35,8 +35,8 @@ test("every point within the radius falls in a returned tile", () => {
 });
 
 test("parseTile expands compact rows and names unnamed pubs", () => {
-  assert.deepEqual(parseTile([["node/1", "The Crown", 51.5, -0.1], ["way/2", "", 52, 0]]), [
-    { id: "node/1", name: "The Crown", lat: 51.5, lon: -0.1 },
-    { id: "way/2", name: "Unnamed pub", lat: 52, lon: 0 },
+  assert.deepEqual(parseTile([["node/1", "The Crown", 51.5, -0.1, { food: "yes" }], ["way/2", "", 52, 0]]), [
+    { id: "node/1", name: "The Crown", lat: 51.5, lon: -0.1, tags: { food: "yes" } },
+    { id: "way/2", name: "Unnamed pub", lat: 52, lon: 0, tags: {} },
   ]);
 });

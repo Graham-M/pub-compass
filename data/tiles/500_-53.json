@@ -1,1 +1,1 @@
-[["node/354484678","Halzephron Inn",50.055735,-5.27441],["node/6550785020","Old Inn",50.027937,-5.242825],["way/591397735","The Black Swan",50.097163,-5.207885],["way/617474759","Ship Inn",50.080258,-5.204101]]
+[["node/354484678","Halzephron Inn",50.055735,-5.27441,{"outdoor_seating":"yes"}],["node/6550785020","Old Inn",50.027937,-5.242825,{"wikidata":"Q26613848","outdoor_seating":"yes"}],["way/591397735","The Black Swan",50.097163,-5.207885,{"wikidata":"Q111874648","outdoor_seating":"yes","food":"yes"}],["way/617474759","Ship Inn",50.080258,-5.204101]]

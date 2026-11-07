@@ -10,6 +10,10 @@ Overpass (fallback outside static coverage):
 - Cache results in localStorage keyed on coords rounded to ~500m tiles, 1h TTL.
 - On 429 or timeout, back off and retry against overpass.kumi.systems as a fallback. Show a friendly error if both fail.
 
+Factoids:
+- Each target pub shows one "Did you know?" headline (facts.js): Wikipedia summary if it has a wikipedia/wikidata tag (wiki.js, async) > old start_date > Wetherspoon > old_name > pub-name trivia > brewery > a stable fallback line. Plus badge chips from tags (real ale, real fire, listed…).
+- Tiles and Overpass results keep only the KEEP_TAGS whitelist in lib.js. Name trivia must be well-established history about the name, hedged where it's folklore — never invented claims about a specific pub.
+
 "Not that one" feature:
 - Add a "Nah, next one" button that skips the current target and points to the next-nearest pub.
 - Keep a skipped set of OSM IDs in sessionStorage. Skipped pubs stay skipped even as the user moves and the list is re-sorted or refetched.
